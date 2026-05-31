@@ -36,6 +36,14 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+const AUDIO_MIME_TYPES = ['audio/mp3', 'audio/mpeg', 'audio/wav', 'audio/x-wav', 'audio/mp4', 'audio/m4a', 'audio/ogg', 'audio/webm'];
+const AUDIO_EXTENSIONS = ['.mp3', '.wav', '.m4a', '.ogg'];
+
+const isAudioFile = (file) => {
+  const ext = path.extname(file.originalname || file).toLowerCase();
+  return AUDIO_MIME_TYPES.includes(file.mimetype) || AUDIO_EXTENSIONS.includes(ext);
+};
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
@@ -180,18 +188,29 @@ app.post('/api/analyze', upload.single('videoFile'), async (req, res) => {
     httpOptions: { timeout: 600000 } 
   });
 
+  // Detectar si el archivo ya es audio para saltarse FFmpeg
+  const fileIsAudio = req.file ? isAudioFile(req.file) : AUDIO_EXTENSIONS.includes(path.extname(resolvedVideoPath).toLowerCase());
+
   try {
-    console.log(`Paso 1: Extrayendo audio de ${resolvedVideoPath} a ${tempAudioPath}...`);
-    await extractAudio(resolvedVideoPath, tempAudioPath);
+    let actualAudioPath = tempAudioPath;
+
+    if (fileIsAudio) {
+      console.log('Paso 1: El archivo ya es audio, omitiendo extracción con FFmpeg.');
+      actualAudioPath = resolvedVideoPath; // usar el archivo directamente
+    } else {
+      console.log(`Paso 1: Extrayendo audio de ${resolvedVideoPath} a ${tempAudioPath}...`);
+      await extractAudio(resolvedVideoPath, tempAudioPath);
+    }
 
     let transcription = null;
 
     if (groqApiKey) {
       console.log('Paso 2: Transcribiendo audio usando la API de Groq (Whisper)...');
       const formData = new FormData();
-      const fileBuffer = fs.readFileSync(tempAudioPath);
-      const fileBlob = new Blob([fileBuffer], { type: 'audio/mp3' });
-      formData.append('file', fileBlob, 'audio.mp3');
+      const fileBuffer = fs.readFileSync(actualAudioPath);
+      const audioMime = fileIsAudio ? (req.file?.mimetype || 'audio/mpeg') : 'audio/mp3';
+      const fileBlob = new Blob([fileBuffer], { type: audioMime });
+      formData.append('file', fileBlob, path.basename(actualAudioPath));
       formData.append('model', 'whisper-large-v3');
       formData.append('response_format', 'verbose_json');
 
@@ -217,9 +236,10 @@ app.post('/api/analyze', upload.single('videoFile'), async (req, res) => {
       console.log('Transcripción con Groq finalizada exitosamente.');
     } else {
       console.log('Paso 2: Subiendo audio a la API de Gemini...');
+      const uploadMime = fileIsAudio ? (req.file?.mimetype || 'audio/mpeg') : 'audio/mp3';
       uploadResult = await ai.files.upload({
-        file: tempAudioPath,
-        mimeType: 'audio/mp3',
+        file: actualAudioPath,
+        mimeType: uploadMime,
       });
 
       console.log(`Archivo subido con éxito: ${uploadResult.name}. Esperando estado ACTIVE...`);
@@ -459,7 +479,7 @@ Reglas importantes para el análisis:
 
     // Limpieza de archivos temporales locales
     try {
-      if (fs.existsSync(tempAudioPath)) {
+      if (!fileIsAudio && fs.existsSync(tempAudioPath)) {
         fs.unlinkSync(tempAudioPath);
       }
       if (isUpload && fs.existsSync(resolvedVideoPath)) {

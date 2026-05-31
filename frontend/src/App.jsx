@@ -735,14 +735,17 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="form-group">
-                    <label className="form-label" htmlFor="videoFileInput">Selecciona el archivo de video:</label>
+                    <label className="form-label" htmlFor="videoFileInput">Selecciona el archivo de video o audio:</label>
                     <input 
                       id="videoFileInput"
                       type="file" 
-                      accept="video/mp4" 
+                      accept="video/mp4,video/webm,audio/mp3,audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/m4a,audio/ogg,.mp4,.mp3,.wav,.m4a,.ogg,.webm" 
                       className="input-field" 
                       onChange={(e) => setSelectedFile(e.target.files[0])}
                     />
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem', display: 'block' }}>
+                      💡 Tip: También puedes subir archivos de audio (.mp3, .wav, .m4a) directamente — ¡es más rápido!
+                    </span>
                   </div>
                 )}
 
