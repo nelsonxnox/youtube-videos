@@ -1,21 +1,21 @@
 :root {
-  --bg-dark: #07070a;
-  --bg-card: rgba(18, 18, 26, 0.75);
-  --bg-card-solid: #12121a;
-  --accent-red: #ef4444;
-  --accent-red-hover: #f87171;
-  --accent-red-glow: rgba(239, 68, 68, 0.35);
-  --accent-red-dim: rgba(239, 68, 68, 0.1);
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-glow: rgba(239, 68, 68, 0.2);
-  --text-primary: #f4f4f9;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --bg-dark: #030712;
+  --bg-card: rgba(17, 24, 39, 0.65);
+  --bg-card-solid: #0f172a;
+  --accent-red: #a855f7;
+  --accent-red-hover: #c084fc;
+  --accent-red-glow: rgba(168, 85, 247, 0.35);
+  --accent-red-dim: rgba(168, 85, 247, 0.1);
+  --border-color: rgba(255, 255, 255, 0.06);
+  --border-glow: rgba(168, 85, 247, 0.2);
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
   --success: #10b981;
   --warning: #f59e0b;
   --info: #3b82f6;
   --font-sans: 'Outfit', sans-serif;
-  --font-logo: 'Creepster', cursive;
+  --font-logo: 'Outfit', sans-serif;
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -32,9 +32,9 @@ body {
   overflow-x: hidden;
   min-height: 100vh;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(239, 68, 68, 0.04) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(239, 68, 68, 0.03) 0%, transparent 50%),
-    linear-gradient(rgba(7, 7, 10, 0.95), rgba(7, 7, 10, 0.95));
+    radial-gradient(circle at 10% 20%, rgba(168, 85, 247, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.05) 0%, transparent 50%),
+    linear-gradient(rgba(3, 7, 18, 0.97), rgba(3, 7, 18, 0.97));
   background-attachment: fixed;
 }
 
@@ -50,7 +50,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(239, 68, 68, 0.25);
+  background: rgba(168, 85, 247, 0.25);
   border-radius: 4px;
 }
 

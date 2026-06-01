@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
     "horror-retention-analyst": "file:..",
     "lucide-react": "^0.395.0",
     "react": "^18.3.1",
