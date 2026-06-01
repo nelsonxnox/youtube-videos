@@ -252,7 +252,12 @@ const extractAudio = (videoPath, audioPath) => {
       })
       .on('error', (err) => {
         console.error('Error al extraer audio:', err);
-        reject// Endpoint principal para analizar el video
+        reject(err);
+      });
+  });
+};
+
+// Endpoint principal para analizar el video
 app.post('/api/analyze', upload.single('videoFile'), async (req, res) => {
   let videoPath = '';
   const isUpload = !!req.file;
